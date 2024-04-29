@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="UserNameAnchorPane" prefHeight="100.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab1.demo.Controller.UserNameController">
+   <children>
+      <Label layoutX="7.0" layoutY="5.0" prefHeight="18.0" prefWidth="118.0" text="User Name:" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="25.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
+      <Label fx:id="UserNameLabel" layoutX="16.0" layoutY="41.0" prefHeight="18.0" prefWidth="118.0" text="Text">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
+   </children>
+</AnchorPane>

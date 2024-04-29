@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="scene1AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="316.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab1.demo.Controller.HelloController">
+   <children>
+      <FlowPane fx:id="FilesPane" hgap="20.0" layoutX="4.0" layoutY="38.0" prefHeight="268.0" prefWidth="630.0" prefWrapLength="100.0" rowValignment="TOP" vgap="40.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="38.0">
+         <padding>
+            <Insets top="3.0" />
+         </padding>
+         <children>
+            <VBox fx:id="Exemple" prefHeight="60.0" prefWidth="60.0">
+               <children>
+                  <ImageView fitHeight="43.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../copy_paste_document_file_1557.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="22.0" prefWidth="69.0" text="Label" />
+               </children>
+            </VBox>
+         </children>
+      </FlowPane>
+      <HBox alignment="CENTER" prefHeight="27.0" prefWidth="640.0" spacing="5.0">
+         <children>
+            <MenuBar prefHeight="27.0" prefWidth="643.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFolder" text="Create nnew folder" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFile" text="Create new file" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnConsoleClicked" text="Console" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Information">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#OnProcessPriorClicked" text="Process priority" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnUserNameClicked" text="User name" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnNumberOfClicked" text="Number of user proceses" />
+                  </items>
+                </Menu>
+                  <Menu mnemonicParsing="false" text="Help">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="About" />
+                     </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Refresh">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#OnReloadClicked" text="Reload" />
+                     </items>
+                  </Menu>
+              </menus>
+            </MenuBar>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
