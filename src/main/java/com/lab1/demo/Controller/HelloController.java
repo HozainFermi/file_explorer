@@ -178,6 +178,22 @@ public class HelloController implements Initializable {
                 FilesPane.getChildren().add(CreateNewFolder("NewFolder"));
             }
         });
+
+        Runnable thr = ()-> {
+            ArrayList<String> resp = null;
+            try {
+                resp = SocketClient.sendCommand("mkdir NewFolder");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            for (String r : resp) {
+                System.out.println(r);
+            }
+        };
+        Thread thread = new Thread(thr);
+        thread.start();
+
+
     }
 
     public void OnConsoleClicked(ActionEvent actionEvent) {
@@ -346,7 +362,7 @@ public class HelloController implements Initializable {
             @Override
             public void handle(ActionEvent actionEvent) {
                 Node copy;
-                copy=CreateNew(fn+"COPY");
+                copy=CreateNewFolder(fn+"COPY");
                 copy.setId(v.getId()+"COPY");
 
                 Platform.runLater(new Runnable() {
