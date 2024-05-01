@@ -87,7 +87,7 @@ public class HelloController implements Initializable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-               FilesPane.getChildren().add(CreateNew("Test"));
+               FilesPane.getChildren().add(CreateNew("Testtesttesttest"));
             }
         });
 
@@ -129,38 +129,63 @@ public class HelloController implements Initializable {
                 filename.setText(resp);
                 v.getChildren().add(filename);
                 v.setId(resp);
-
-
                 fil.add(v);
             }
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     FilesPane.getChildren().setAll(fil);
-
                 }
             });
-
-           //FilesPane.getChildren().setAll(fil);
         } catch(
                 IOException e)
-
         {
             throw new RuntimeException(e);
         }
     }
 
 
-    public void OnCreateNewFile(ActionEvent actionEvent) {
+    public void OnCreateNewFile(ActionEvent actionEvent) throws IOException {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                FilesPane.getChildren().add(CreateNew("New"));
+            }
+        });
+
+        Runnable thr = ()-> {
+            ArrayList<String> resp = null;
+            try {
+                resp = SocketClient.sendCommand("touch New");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            for (String r : resp) {
+                System.out.println(r);
+            }
+        };
+        Thread thread = new Thread(thr);
+        thread.start();
+
+
     }
 
     public void OnCreateNewFolder(ActionEvent actionEvent) {
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                FilesPane.getChildren().add(CreateNewFolder("NewFolder"));
+            }
+        });
     }
 
     public void OnConsoleClicked(ActionEvent actionEvent) {
+
     }
 
     public  Node CreateNew(String fn) {
+
         VBox v = new VBox();
         ImageView iv = new ImageView();
         Label filename = new Label();
@@ -170,7 +195,7 @@ public class HelloController implements Initializable {
         File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/copy_paste_document_file_1557.png");
         Image img = new Image(fl.toURI().toString());
         v.setPrefHeight(60);
-        v.setPrefWidth(60);
+        //v.setPrefWidth(60);
         iv.setFitHeight(41.0);
         iv.setFitWidth(41.0);
         iv.setPickOnBounds(true);
@@ -178,6 +203,8 @@ public class HelloController implements Initializable {
         iv.setImage(img);
         v.getChildren().add(iv);
         filename.setText(fn);
+        v.setPrefWidth(filename.getWidth());
+        v.setId(fn);
 
         ContextMenu cm = new ContextMenu();
         javafx.scene.control.MenuItem delete = new javafx.scene.control.MenuItem("Delete");
@@ -190,37 +217,161 @@ public class HelloController implements Initializable {
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                v.getChildren().removeAll();
-                try {
-                    ArrayList<String> resp =  SocketClient.sendCommand("rm "+fn);
-                    for(String ln : resp){
-                        System.out.println(ln);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        FilesPane.getChildren().remove(v);
+                        v.getChildren().removeAll();
                     }
+                });
+               // v.getChildren().removeAll();
+                Thread rn = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ArrayList<String> resp =  SocketClient.sendCommand("rm "+fn);
+                            for(String ln : resp){
+                                System.out.println(ln);
+                            }
 
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                rn.start();
+
             }
         });
 
         copy.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                Node copy;
+                copy=CreateNew(fn+"COPY");
+                copy.setId(v.getId()+"COPY");
+
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        FilesPane.getChildren().add(v);
+                        FilesPane.getChildren().add(copy);
                     }
                 });
-                try {
-                    ArrayList<String> resp =  SocketClient.sendCommand("cp "+fn+" "+fn+"COPY");
-                    for(String ln : resp){
-                        System.out.println(ln);
-                    }
 
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                Thread thr = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ArrayList<String> resp =  SocketClient.sendCommand("cp "+fn+" "+fn+"COPY");
+                            for(String ln : resp){
+                                System.out.println(ln);
+                            }
+
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                thr.start();
+
+            }
+        });
+
+
+
+
+        return v;
+    }
+
+    public  Node CreateNewFolder(String fn) {
+        VBox v = new VBox();
+        ImageView iv = new ImageView();
+        Label filename = new Label();
+        Insets insets = new Insets(10, 5, 0, 0);
+        v.setPadding(insets);
+
+        File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/folder-documents-icon(1).png");
+        Image img = new Image(fl.toURI().toString());
+        v.setPrefHeight(60);
+        //v.setPrefWidth(60);
+        iv.setFitHeight(41.0);
+        iv.setFitWidth(41.0);
+        iv.setPickOnBounds(true);
+        iv.setPreserveRatio(true);
+        iv.setImage(img);
+        v.getChildren().add(iv);
+        filename.setText(fn);
+        v.setPrefWidth(filename.getWidth());
+
+        ContextMenu cm = new ContextMenu();
+        javafx.scene.control.MenuItem delete = new javafx.scene.control.MenuItem("Delete");
+        javafx.scene.control.MenuItem copy = new MenuItem("Copy");
+
+        cm.getItems().addAll(delete, copy);
+        filename.setContextMenu(cm);
+        v.getChildren().add(filename);
+        v.setId(fn);
+
+        delete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        FilesPane.getChildren().remove(v);
+                        v.getChildren().removeAll();
+                    }
+                });
+                // v.getChildren().removeAll();
+                Thread rn = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ArrayList<String> resp =  SocketClient.sendCommand("rm -r "+fn);
+                            for(String ln : resp){
+                                System.out.println(ln);
+                            }
+
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                rn.start();
+
+            }
+        });
+
+        copy.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Node copy;
+                copy=CreateNew(fn+"COPY");
+                copy.setId(v.getId()+"COPY");
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        FilesPane.getChildren().add(copy);
+                    }
+                });
+
+                Thread thr = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ArrayList<String> resp =  SocketClient.sendCommand("cp -r "+fn+" "+fn+"COPY");
+                            for(String ln : resp){
+                                System.out.println(ln);
+                            }
+
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                thr.start();
+
             }
         });
 

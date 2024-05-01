@@ -3,7 +3,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="NumberOfAnchorPane" prefHeight="100.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab1.demo.Controller.NumberOfController">
+<AnchorPane fx:id="NumberOfAnchorPane" prefHeight="150.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab1.demo.Controller.NumberOfController">
    <children>
       <Label layoutY="4.0" prefHeight="21.0" prefWidth="179.0" text="Number of user processes:" />
       <Label fx:id="NumberOfLabel" layoutX="19.0" layoutY="40.0" prefHeight="21.0" prefWidth="112.0" text="Label" />
