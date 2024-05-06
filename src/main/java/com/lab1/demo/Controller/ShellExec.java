@@ -14,7 +14,7 @@ public class ShellExec {
         ProcessBuilder builder = new ProcessBuilder();
 
         builder.command("sh", "-c", command);
-        builder.directory(new File("/home/me/IdeaProjects/demo/src/main/java/com/lab1/demo/"));
+        builder.directory(new File("/home/me/IdeaProjects/demo/src/"));
 
         Process process = builder.start();
         BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
