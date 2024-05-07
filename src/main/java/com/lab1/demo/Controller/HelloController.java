@@ -117,6 +117,8 @@ public class HelloController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+
+
         try {
             SocketClient.startConnection("127.0.0.1", 8080);
         } catch (IOException e) {
@@ -302,6 +304,7 @@ public class HelloController implements Initializable {
         filename.setWrapText(true);
         v.setId(fn+"<file>");
 
+
         ContextMenu cm = new ContextMenu();
         javafx.scene.control.MenuItem open = new javafx.scene.control.MenuItem("Open");
         javafx.scene.control.MenuItem rename = new javafx.scene.control.MenuItem("Rename");
@@ -311,6 +314,16 @@ public class HelloController implements Initializable {
         cm.getItems().addAll(open,rename, copy, delete);
         filename.setContextMenu(cm);
         v.getChildren().add(filename);
+
+
+        v.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                //!!!!!
+            }
+        });
+
+
 
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -322,7 +335,7 @@ public class HelloController implements Initializable {
                         v.getChildren().removeAll();
                     }
                 });
-               // v.getChildren().removeAll();
+
                 Thread rn = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -447,6 +460,8 @@ public class HelloController implements Initializable {
             }
         });
 
+
+
         return v;
     }
 
@@ -483,6 +498,27 @@ public class HelloController implements Initializable {
         filename.setContextMenu(cm);
         v.getChildren().add(filename);
         v.setId(fn);
+
+        v.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+                //!!!v.setStyle("-fx-background-color: rgba(13, 137, 209, 0.63)");
+            }
+        });
+
+        v.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+                //!!!
+            }
+        });
+
+        v.setOnDragExited(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+                //!!! v.setStyle("-fx-background-color: transparent");
+            }
+        });
 
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
