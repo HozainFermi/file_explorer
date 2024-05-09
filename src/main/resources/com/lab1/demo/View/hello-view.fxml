@@ -52,6 +52,11 @@
                         <MenuItem mnemonicParsing="false" onAction="#OnNumberOfClicked" text="Number of user proceses" />
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="Devises">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#OnShowDevises" text="Show devises" />
+                     </items>
+                  </Menu>
                   <Menu mnemonicParsing="false" text="Help">
                      <items>
                         <MenuItem mnemonicParsing="false" text="About" />

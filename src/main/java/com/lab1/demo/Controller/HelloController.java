@@ -23,10 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.geometry.Insets;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -278,6 +275,22 @@ public class HelloController implements Initializable {
 
     }
 
+    public void OnShowDevises(ActionEvent actionEvent) throws IOException {
+        ArrayList<String> list = ShellExec.ExecCommand("ls /media/me/");
+        for(String resp : list){
+            FolderVIewController.Getfn("/media/me/"+resp+"/");
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/FolderView.fxml"));
+            Parent root1 = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle(resp);
+            stage.setScene(new Scene(root1));
+            stage.show();
+        }
+
+
+
+    }
+
     public void OnConsoleClicked(ActionEvent actionEvent) {
 
     }
@@ -319,7 +332,8 @@ public class HelloController implements Initializable {
         v.setOnDragDetected(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                //!!!!!
+                v.setStyle("-fx-border-color: black");
+
             }
         });
 
@@ -403,7 +417,6 @@ public class HelloController implements Initializable {
                         }
                     });
                     tr.start();
-
             }
         });
 
@@ -502,7 +515,7 @@ public class HelloController implements Initializable {
         v.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent dragEvent) {
-                //!!!v.setStyle("-fx-background-color: rgba(13, 137, 209, 0.63)");
+                v.setStyle("-fx-background-color: rgba(13, 137, 209, 0.63)");
             }
         });
 
@@ -516,7 +529,7 @@ public class HelloController implements Initializable {
         v.setOnDragExited(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent dragEvent) {
-                //!!! v.setStyle("-fx-background-color: transparent");
+                v.setStyle("-fx-background-color: transparent");
             }
         });
 
@@ -530,7 +543,7 @@ public class HelloController implements Initializable {
                         v.getChildren().removeAll();
                     }
                 });
-                // v.getChildren().removeAll();
+
                 Thread rn = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -656,5 +669,6 @@ public class HelloController implements Initializable {
 
         return v;
     }
+
 
 }
