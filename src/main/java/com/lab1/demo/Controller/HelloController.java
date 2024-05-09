@@ -51,6 +51,8 @@ public class HelloController implements Initializable {
 
     ArrayList<Node> fil = new ArrayList<Node>();
 
+
+
     @FXML
      void OnUserNameClicked(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/UserNameScene.fxml"));
@@ -92,7 +94,6 @@ public class HelloController implements Initializable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/hello-view.fxml"));
                 Parent root1 = null;
                 try {
@@ -100,31 +101,30 @@ public class HelloController implements Initializable {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
                 Stage current = (Stage) FilesPane.getScene().getWindow();
                 current.setScene(new Scene(root1));
-                //current.show();
-
-
             }
         });
-
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
-
         try {
             SocketClient.startConnection("127.0.0.1", 8080);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        FilesPane.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
+            @Override
+            public void handle(MouseDragEvent mouseDragEvent) {
+                VBox vb = (VBox)mouseDragEvent.getGestureSource();
+                vb.setStyle("-fx-border-color: transparent");
+            }
+        });
+
         try
-
         {
-
            ArrayList<String> listfolders = ShellExec.ExecCommand("ls -d */");
            ArrayList<String> listfiles = ShellExec.ExecCommand("ls -p | grep -v /");
 
@@ -172,8 +172,45 @@ public class HelloController implements Initializable {
                     filename.setText("Trash");
                     filename.setTextAlignment(TextAlignment.LEFT);
                     filename.setWrapText(true);
-                    v.getChildren().add(filename);
                     v.setId(resp);
+
+                    ContextMenu cm = new ContextMenu();
+                    javafx.scene.control.MenuItem open = new javafx.scene.control.MenuItem("Open");
+                    javafx.scene.control.MenuItem empty = new javafx.scene.control.MenuItem("Empty");
+
+                    cm.getItems().addAll(open, empty);
+                    filename.setContextMenu(cm);
+                    v.getChildren().add(filename);
+
+                    open.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            FolderVIewController.Getfn("TrashCan");
+                            FXMLLoader Loader = new FXMLLoader(HelloApplication.class.getResource("View/FolderView.fxml"));
+                            Parent root1 = null;
+                            try {
+                                root1 = (Parent) Loader.load();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            Stage stage = new Stage();
+                            stage.setTitle(filename.getText());
+                            stage.setScene(new Scene(root1));
+                            stage.show();
+
+                        }
+                    });
+
+                    empty.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            try {
+                                ShellExec.ExecCommand("rm -f TrashCan/*");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
 
                     v.setOnMouseDragExited(new EventHandler<MouseDragEvent>() {
                         @Override
@@ -186,8 +223,6 @@ public class HelloController implements Initializable {
                             });
                         }
                     });
-
-
                     v.setOnMouseDragEntered(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
@@ -197,6 +232,21 @@ public class HelloController implements Initializable {
                                     v.setStyle("-fx-background-color: rgba(13, 137, 209, 0.63)");
                                 }
                             });
+                        }
+                    });
+                    v.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
+                        @Override
+                        public void handle(MouseDragEvent mouseDragEvent) {
+                            VBox vBox = (VBox)mouseDragEvent.getGestureSource();
+                            String filename = (String)vBox.getId();
+                            filename=filename.replace("<file>","");
+                            //v.setStyle("-fx-border-color: transparent");
+                            FilesPane.getChildren().remove(vBox);
+                            try {
+                                ShellExec.ExecCommand("mv "+filename+" TrashCan");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     });
 
@@ -223,7 +273,6 @@ public class HelloController implements Initializable {
         }
     }
 
-
     public void OnCreateNewFile(ActionEvent actionEvent) throws IOException {
         Platform.runLater(new Runnable() {
             @Override
@@ -235,7 +284,7 @@ public class HelloController implements Initializable {
         Runnable thr = ()-> {
             ArrayList<String> resp = null;
             try {
-                resp = SocketClient.sendCommand("touch New");
+                resp = ShellExec.ExecCommand("touch New");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -245,8 +294,6 @@ public class HelloController implements Initializable {
         };
         Thread thread = new Thread(thr);
         thread.start();
-
-
     }
 
     public void OnCreateNewFolder(ActionEvent actionEvent) {
@@ -261,7 +308,7 @@ public class HelloController implements Initializable {
         Runnable thr = ()-> {
             ArrayList<String> resp = null;
             try {
-                resp = SocketClient.sendCommand("mkdir NewFolder");
+                resp = ShellExec.ExecCommand("mkdir NewFolder");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -333,7 +380,15 @@ public class HelloController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 v.setStyle("-fx-border-color: black");
+                v.startFullDrag();
 
+            }
+        });
+
+        v.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
+            @Override
+            public void handle(MouseDragEvent mouseDragEvent) {
+                v.setStyle("-fx-border-color: transparent");
             }
         });
 
@@ -512,24 +567,44 @@ public class HelloController implements Initializable {
         v.getChildren().add(filename);
         v.setId(fn);
 
-        v.setOnDragOver(new EventHandler<DragEvent>() {
+        v.setOnMouseDragEntered(new EventHandler<MouseDragEvent>() {
             @Override
-            public void handle(DragEvent dragEvent) {
-                v.setStyle("-fx-background-color: rgba(13, 137, 209, 0.63)");
+            public void handle(MouseDragEvent mouseDragEvent) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setStyle("-fx-background-color: rgba(13, 137, 209, 0.63)");
+                    }
+                });
             }
         });
 
-        v.setOnDragDropped(new EventHandler<DragEvent>() {
+        v.setOnMouseDragExited(new EventHandler<MouseDragEvent>() {
             @Override
-            public void handle(DragEvent dragEvent) {
-                //!!!
+            public void handle(MouseDragEvent mouseDragEvent) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setStyle("-fx-background-color: transparent");
+                    }
+                });
             }
         });
 
-        v.setOnDragExited(new EventHandler<DragEvent>() {
+        v.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
             @Override
-            public void handle(DragEvent dragEvent) {
-                v.setStyle("-fx-background-color: transparent");
+            public void handle(MouseDragEvent mouseDragEvent) {
+                VBox vBox = (VBox)mouseDragEvent.getGestureSource();
+                String foldername = (String)vBox.getId();
+                foldername=foldername.replace("<file>","");
+                //v.setStyle("-fx-border-color: transparent");
+                FilesPane.getChildren().remove(vBox);
+                try {
+                    ShellExec.ExecCommand("mv "+foldername+" "+filename.getText());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         });
 
