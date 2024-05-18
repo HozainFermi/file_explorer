@@ -1,11 +1,15 @@
 package com.lab1.demo;
 
+import com.lab1.demo.Model.SocketClient;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class HelloApplication extends Application {
     @Override
@@ -17,6 +21,26 @@ public class HelloApplication extends Application {
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
+
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ArrayList<String> resp = SocketClient.sendCommand("$BASHPID");
+                            String PID = resp.getFirst().replace(": java","");
+                            SocketClient.sendCommand("kill "+PID);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                thread.start();
+                System.exit(0);
+            }
+        });
     }
 
     public static void main(String[] args) {

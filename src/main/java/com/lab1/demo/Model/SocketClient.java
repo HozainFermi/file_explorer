@@ -36,6 +36,8 @@ public class SocketClient {
 
     }
 
+
+
     public static void stopConnection() throws IOException {
         in.close();
         out.close();

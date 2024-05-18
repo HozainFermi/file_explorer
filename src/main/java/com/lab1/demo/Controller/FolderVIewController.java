@@ -35,11 +35,13 @@ public class FolderVIewController implements Initializable {
    // ArrayList<String> listfiles=new ArrayList<>();
    // ArrayList<String> listfolders = new ArrayList<>();
    static String fn;
+   public String path;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ArrayList<Node> nodes = new ArrayList<>();
+        path=fn;
         Thread thr = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -112,7 +114,7 @@ public class FolderVIewController implements Initializable {
         cm.getItems().addAll(open,rename, copy, delete);
         filename.setContextMenu(cm);
         v.getChildren().add(filename);
-        v.setId(fn);
+        //v.setId(fn);  // <folder>
 
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -129,7 +131,7 @@ public class FolderVIewController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("rm -r "+filename.getText());
+                            ArrayList<String> resp =  ShellExec.ExecCommand("rm -r "+path+"/"+ filename.getText());
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -161,7 +163,7 @@ public class FolderVIewController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("cp -r "+filename.getText()+" "+filename.getText()+"COPY");
+                            ArrayList<String> resp =  ShellExec.ExecCommand("cp -r "+path+"/"+filename.getText()+" "+path+"/"+filename.getText()+"COPY");
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -220,7 +222,7 @@ public class FolderVIewController implements Initializable {
                             @Override
                             public void run() {
                                 try {
-                                    SocketClient.sendCommand("mv "+filename.getText()+" "+tx.getText());
+                                    ShellExec.ExecCommand("mv "+path+"/"+filename.getText()+" "+path+"/"+tx.getText());
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -298,7 +300,7 @@ public class FolderVIewController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("rm "+filename.getText());
+                            ArrayList<String> resp =  ShellExec.ExecCommand("rm "+path+"/"+filename.getText());
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -331,7 +333,7 @@ public class FolderVIewController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("cp "+filename.getText()+" "+filename.getText()+"COPY");
+                            ArrayList<String> resp =  ShellExec.ExecCommand ("cp "+path+"/"+filename.getText()+" "+path+"/"+filename.getText()+"COPY");
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -354,7 +356,7 @@ public class FolderVIewController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            SocketClient.sendCommand("gedit "+filename.getText());
+                            ShellExec.ExecCommand("gedit "+path+"/"+filename.getText());
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -391,7 +393,7 @@ public class FolderVIewController implements Initializable {
                             @Override
                             public void run() {
                                 try {
-                                    SocketClient.sendCommand("mv "+filename.getText()+" "+tx.getText());
+                                    ShellExec.ExecCommand("mv "+path+"/"+filename.getText()+" "+path+"/"+tx.getText());
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }

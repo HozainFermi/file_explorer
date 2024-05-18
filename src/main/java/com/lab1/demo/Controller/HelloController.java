@@ -45,7 +45,6 @@ public class HelloController implements Initializable {
     @FXML
     public FlowPane FilesPane;
 
-//static String renametx;
 
 
 
@@ -109,11 +108,18 @@ public class HelloController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            SocketClient.startConnection("127.0.0.1", 8080);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ShellExec.ExecCommand("cd /home/me/IdeaProjects/ && java -jar CommandLine-1.0-SNAPSHOT-shaded.jar");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        thread.start();
 
         FilesPane.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
             @Override
@@ -323,9 +329,10 @@ public class HelloController implements Initializable {
     }
 
     public void OnShowDevises(ActionEvent actionEvent) throws IOException {
-        ArrayList<String> list = ShellExec.ExecCommand("ls /media/me/");
+        ArrayList<String> username = ShellExec.ExecCommand("whoami");
+        ArrayList<String> list = ShellExec.ExecCommand("ls /media/"+username.getFirst()+"/");  // !!!!!!
         for(String resp : list){
-            FolderVIewController.Getfn("/media/me/"+resp+"/");
+            FolderVIewController.Getfn("/media/"+username.getFirst()+"/"+resp+"/");
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/FolderView.fxml"));
             Parent root1 = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
@@ -338,9 +345,35 @@ public class HelloController implements Initializable {
 
     }
 
-    public void OnConsoleClicked(ActionEvent actionEvent) {
+    public void OnConsoleClicked(ActionEvent actionEvent) throws IOException, InterruptedException {
+
+
+        try {
+           // if (thread.getState()!=Thread.State.TERMINATED) {
+                SocketClient.startConnection("127.0.0.1", 8090);
+           // }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<String> resp = SocketClient.sendCommand("$$");
+                    System.out.println(resp.get(0)+","+resp.get(1));
+                    //     String PID = resp.getFirst().replace(": java","");
+                    //   SocketClient.sendCommand("kill "+PID);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        thread.start();
 
     }
+
+
+
 
     public  Node CreateNew(String fn) {
 
@@ -409,7 +442,7 @@ public class HelloController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("rm "+filename.getText());
+                            ArrayList<String> resp =  ShellExec.ExecCommand ("rm "+filename.getText());
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -442,7 +475,7 @@ public class HelloController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("cp "+filename.getText()+" "+filename.getText()+"COPY");
+                            ArrayList<String> resp =  ShellExec.ExecCommand ("cp "+filename.getText()+" "+filename.getText()+"COPY");
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -465,7 +498,7 @@ public class HelloController implements Initializable {
                         @Override
                         public void run() {
                             try {
-                                SocketClient.sendCommand("gedit "+filename.getText());
+                                ShellExec.ExecCommand ("gedit "+filename.getText());
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
@@ -501,7 +534,7 @@ public class HelloController implements Initializable {
                             @Override
                             public void run() {
                                 try {
-                                    SocketClient.sendCommand("mv "+fn+" "+tx.getText());
+                                    ShellExec.ExecCommand ("mv "+fn+" "+tx.getText());
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -623,7 +656,7 @@ public class HelloController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("rm -r "+filename.getText());
+                            ArrayList<String> resp =  ShellExec.ExecCommand ("rm -r "+filename.getText());
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -655,7 +688,7 @@ public class HelloController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp =  SocketClient.sendCommand("cp -r "+filename.getText()+" "+filename.getText()+"COPY");
+                            ArrayList<String> resp =  ShellExec.ExecCommand ("cp -r "+filename.getText()+" "+filename.getText()+"COPY");
                             for(String ln : resp){
                                 System.out.println(ln);
                             }
@@ -715,7 +748,7 @@ public class HelloController implements Initializable {
                             @Override
                             public void run() {
                                 try {
-                                    SocketClient.sendCommand("mv "+fn+" "+tx.getText());
+                                    ShellExec.ExecCommand ("mv "+fn+" "+tx.getText());
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
