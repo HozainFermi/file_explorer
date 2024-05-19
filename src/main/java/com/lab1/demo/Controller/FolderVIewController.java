@@ -15,6 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
@@ -40,6 +42,14 @@ public class FolderVIewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        FilesPane.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
+            @Override
+            public void handle(MouseDragEvent mouseDragEvent) {
+                VBox vb = (VBox)mouseDragEvent.getGestureSource();
+                vb.setStyle("-fx-border-color: transparent");
+            }
+        });
+
         ArrayList<Node> nodes = new ArrayList<>();
         path=fn;
         Thread thr = new Thread(new Runnable() {
@@ -115,6 +125,51 @@ public class FolderVIewController implements Initializable {
         filename.setContextMenu(cm);
         v.getChildren().add(filename);
         //v.setId(fn);  // <folder>
+
+        v.setOnMouseDragEntered(new EventHandler<MouseDragEvent>() {
+            @Override
+            public void handle(MouseDragEvent mouseDragEvent) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setStyle("-fx-background-color: rgba(13, 137, 209, 0.63)");
+                    }
+                });
+            }
+        });
+
+        v.setOnMouseDragExited(new EventHandler<MouseDragEvent>() {
+            @Override
+            public void handle(MouseDragEvent mouseDragEvent) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setStyle("-fx-background-color: transparent");
+                    }
+                });
+            }
+        });
+
+        v.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
+            @Override
+            public void handle(MouseDragEvent mouseDragEvent) {
+                VBox vBox = (VBox)mouseDragEvent.getGestureSource();
+                String name = (String)vBox.getId();
+                if(name.contains("<file>")) {
+                    name = name.replace("<file>", "");
+                }
+                if(name.contains("<folder>")) {
+                    name = name.replace("<folder>", "");
+                }
+                FilesPane.getChildren().remove(vBox);
+                try {
+                    ShellExec.ExecCommand("mv "+path+"/"+name+" "+path+"/"+filename.getText());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
 
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -284,6 +339,22 @@ public class FolderVIewController implements Initializable {
         cm.getItems().addAll(open,rename, copy, delete);
         filename.setContextMenu(cm);
         v.getChildren().add(filename);
+
+        v.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                v.setStyle("-fx-border-color: black");
+                v.startFullDrag();
+
+            }
+        });
+
+        v.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
+            @Override
+            public void handle(MouseDragEvent mouseDragEvent) {
+                v.setStyle("-fx-border-color: transparent");
+            }
+        });
 
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override

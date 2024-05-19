@@ -30,10 +30,7 @@ import javafx.stage.Stage;
 
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -85,6 +82,30 @@ public class HelloController implements Initializable {
         stage.setTitle("Number of proceses");
         stage.setScene(new Scene(root1, 200 , 155));
         stage.show();
+    }
+
+    public void OnSaveLogClicked(ActionEvent event) throws IOException {
+        ShellExec.ExecCommand("touch Log-information");
+        String PATH = "/home/me/IdeaProjects/demo/src/Log-information";
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(PATH)));
+
+        writer.println("------User name------");
+        ArrayList<String> usr = ShellExec.ExecCommand("whoami");
+        writer.println(usr.getFirst());
+
+        writer.println("------Process priority------");
+        ArrayList<String> prior = ShellExec.ExecCommand("ps -eo user,nice,comm | grep java");
+        for(int i=0;i<prior.size();i++){
+            writer.println(prior.get(i));
+        }
+
+        writer.println("------Number of processes------");
+        ArrayList<String> list = ShellExec.ExecCommand("ps -eo user,pid,pcpu,nice,comm | grep -v java");
+        writer.println(list.size());
+        for(int i=0;i<list.size();i++){
+            writer.println(list.get(i));
+        }
+        writer.close();
     }
 
     @FXML
@@ -244,12 +265,14 @@ public class HelloController implements Initializable {
                         @Override
                         public void handle(MouseDragEvent mouseDragEvent) {
                             VBox vBox = (VBox)mouseDragEvent.getGestureSource();
-                            String filename = (String)vBox.getId();
-                            filename=filename.replace("<file>","");
+                            String name = (String)vBox.getId();
+                            name=name.replace("<file>","");
+                            name=name.replace("<folder>","");
+
                             //v.setStyle("-fx-border-color: transparent");
                             FilesPane.getChildren().remove(vBox);
                             try {
-                                ShellExec.ExecCommand("mv "+filename+" TrashCan");
+                                ShellExec.ExecCommand("mv "+name+" TrashCan");
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
@@ -340,9 +363,6 @@ public class HelloController implements Initializable {
             stage.setScene(new Scene(root1));
             stage.show();
         }
-
-
-
     }
 
     public void OnConsoleClicked(ActionEvent actionEvent) throws IOException, InterruptedException {
@@ -355,23 +375,17 @@ public class HelloController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> resp = SocketClient.sendCommand("$$");
-                    System.out.println(resp.get(0)+","+resp.get(1));
-                    //     String PID = resp.getFirst().replace(": java","");
-                    //   SocketClient.sendCommand("kill "+PID);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        thread.start();
-
     }
 
+
+    public void OnAboutClicked(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/AboutScene.fxml"));
+        Parent root1 = (Parent) fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setTitle("About");
+        stage.setScene(new Scene(root1));
+        stage.show();
+    }
 
 
 
@@ -628,12 +642,17 @@ public class HelloController implements Initializable {
             @Override
             public void handle(MouseDragEvent mouseDragEvent) {
                 VBox vBox = (VBox)mouseDragEvent.getGestureSource();
-                String foldername = (String)vBox.getId();
-                foldername=foldername.replace("<file>","");
+                String name = (String)vBox.getId();
+                if(name.contains("<file>")) {
+                    name = name.replace("<file>", "");
+                }
+                if(name.contains("<folder>")) {
+                    name = name.replace("<folder>", "");
+                }
                 //v.setStyle("-fx-border-color: transparent");
                 FilesPane.getChildren().remove(vBox);
                 try {
-                    ShellExec.ExecCommand("mv "+foldername+" "+filename.getText());
+                    ShellExec.ExecCommand("mv "+name+" "+filename.getText());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -777,6 +796,5 @@ public class HelloController implements Initializable {
 
         return v;
     }
-
 
 }

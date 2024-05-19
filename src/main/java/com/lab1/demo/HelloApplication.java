@@ -29,9 +29,9 @@ public class HelloApplication extends Application {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp = SocketClient.sendCommand("$BASHPID");
-                            String PID = resp.getFirst().replace(": java","");
-                            SocketClient.sendCommand("kill "+PID);
+                            ArrayList<String> resp = SocketClient.sendCommand("kill -9 $(lsof -t -i:8090)");
+                           System.out.println(resp.getFirst());
+
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

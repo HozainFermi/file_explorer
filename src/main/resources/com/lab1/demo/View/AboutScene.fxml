@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="130.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab1.demo.Controller.AboutScene">
+   <children>
+      <Label alignment="TOP_LEFT" contentDisplay="TOP" layoutX="20.0" layoutY="14.0" prefHeight="26.0" prefWidth="254.0" text="Operating systems and shells " />
+      <Label layoutX="20.0" layoutY="40.0" prefHeight="16.0" prefWidth="192.0" text="Made with Java" />
+      <Label layoutX="20.0" layoutY="65.0" prefHeight="16.0" prefWidth="225.0" text="Ermishin Maksim Vladimirovich" />
+      <Label layoutX="20.0" layoutY="87.0" text="IVT 23" />
+   </children>
+</AnchorPane>

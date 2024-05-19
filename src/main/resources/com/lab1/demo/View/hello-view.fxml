@@ -50,6 +50,7 @@
                     <MenuItem mnemonicParsing="false" onAction="#OnProcessPriorClicked" text="Process priority" />
                         <MenuItem mnemonicParsing="false" onAction="#OnUserNameClicked" text="User name" />
                         <MenuItem mnemonicParsing="false" onAction="#OnNumberOfClicked" text="Number of user proceses" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnSaveLogClicked" text="Save log" />
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="Devises">
@@ -59,7 +60,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
                      <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnAboutClicked" text="About" />
                      </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Refresh">
