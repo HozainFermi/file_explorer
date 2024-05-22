@@ -20,9 +20,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.geometry.Insets;
 import javafx.scene.text.TextAlignment;
@@ -31,6 +29,7 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.*;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -41,9 +40,13 @@ public class HelloController implements Initializable {
 
     @FXML
     public FlowPane FilesPane;
+    public MenuItem ReloadBtn;
+    public MenuItem CreateNewFolderBtn;
+    public MenuItem CreateNewFileBtn;
+    public MenuItem ConsoleBtn;
+    public MenuItem SaveLogBtn;
 
-
-
+    String mainpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
     ArrayList<Node> fil = new ArrayList<Node>();
 
@@ -86,7 +89,7 @@ public class HelloController implements Initializable {
 
     public void OnSaveLogClicked(ActionEvent event) throws IOException {
         ShellExec.ExecCommand("touch Log-information");
-        String PATH = "/home/me/IdeaProjects/demo/src/Log-information";
+        String PATH = mainpath+"Log-information";
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(PATH)));
 
         writer.println("------User name------");
@@ -127,17 +130,35 @@ public class HelloController implements Initializable {
         });
     }
 
+
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        ReloadBtn.setAccelerator(new KeyCodeCombination(KeyCode.R,KeyCombination.CONTROL_DOWN));
+        CreateNewFolderBtn.setAccelerator(new KeyCodeCombination(KeyCode.E,KeyCombination.CONTROL_DOWN));
+        CreateNewFileBtn.setAccelerator(new KeyCodeCombination(KeyCode.X,KeyCombination.CONTROL_DOWN));
+        ConsoleBtn.setAccelerator(new KeyCodeCombination(KeyCode.T,KeyCombination.CONTROL_DOWN));
+        SaveLogBtn.setAccelerator(new KeyCodeCombination(KeyCode.L,KeyCombination.CONTROL_DOWN));
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    ShellExec.ExecCommand("cd /home/me/IdeaProjects/ && java -jar CommandLine-1.0-SNAPSHOT-shaded.jar");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                  // ShellExec.ExecCommand("cd /home/me/IdeaProjects/ && java -jar CommandLine-1.0-SNAPSHOT-shaded.jar");
+                  // /home/me/IdeaProjects/demo/target/demo-1.0-SNAPSHOT-shaded.jar
+
+                  String pathtocmd =mainpath.replace("demo-1.0-SNAPSHOT-shaded.jar","CommandLine-1.0-SNAPSHOT-shaded.jar");
+                  System.out.println(mainpath);
+                  mainpath=mainpath.replace("demo-1.0-SNAPSHOT-shaded.jar","");
+
+                   // CommandLine-1.0-SNAPSHOT-shaded.jar
+                  ShellExec.ExecCommand("java -jar"+" "+pathtocmd); //exec cmd
+
+              } catch (IOException e) {
+                   throw new RuntimeException(e);
+              }
             }
         });
         thread.start();
@@ -164,7 +185,7 @@ public class HelloController implements Initializable {
                     Insets insets = new Insets(10, 5, 0, 0);
                     v.setPadding(insets);
 
-                    File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/folder-documents-icon(1).png");
+                    File fl = new File(mainpath+"folder-documents-icon(1).png");
                     Image img = new Image(fl.toURI().toString());
                     v.setPrefHeight(60);
                     v.setPrefWidth(60);
@@ -186,7 +207,7 @@ public class HelloController implements Initializable {
                     Insets insets = new Insets(10, 5, 0, 0);
                     v.setPadding(insets);
 
-                    File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/delete(1).png");
+                    File fl = new File(mainpath+"delete(1).png");
                     Image img = new Image(fl.toURI().toString());
                     v.setPrefHeight(Region.USE_COMPUTED_SIZE);
                     v.setPrefWidth(60);
@@ -292,7 +313,9 @@ public class HelloController implements Initializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
+
                     FilesPane.getChildren().setAll(fil);
+
                 }
             });
         } catch(
@@ -375,6 +398,10 @@ public class HelloController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+       // String fullpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+       // System.out.println(fullpath);
+       // SocketClient.sendCommand(fullpath);
+
     }
 
 
@@ -397,7 +424,7 @@ public class HelloController implements Initializable {
         Insets insets = new Insets(10, 5, 0, 0);
         v.setPadding(insets);
 
-        File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/copy_paste_document_file_1557.png");
+        File fl = new File(mainpath+"copy_paste_document_file_1557.png");
         Image img = new Image(fl.toURI().toString());
         v.setPrefHeight(Region.USE_COMPUTED_SIZE);
         v.setPrefWidth(60);
@@ -588,7 +615,7 @@ public class HelloController implements Initializable {
         Insets insets = new Insets(10, 5, 0, 0);
         v.setPadding(insets);
 
-        File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/folder-documents-icon(1).png");
+        File fl = new File(mainpath+"folder-documents-icon(1).png");
         Image img = new Image(fl.toURI().toString());
         v.setPrefHeight(Region.USE_COMPUTED_SIZE);
         v.setPrefWidth(60);
@@ -796,5 +823,7 @@ public class HelloController implements Initializable {
 
         return v;
     }
+
+
 
 }

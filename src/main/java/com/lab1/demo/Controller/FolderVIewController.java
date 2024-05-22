@@ -34,8 +34,8 @@ public class FolderVIewController implements Initializable {
     @FXML
     public FlowPane FilesPane;
 
-   // ArrayList<String> listfiles=new ArrayList<>();
-   // ArrayList<String> listfolders = new ArrayList<>();
+    String mainpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+
    static String fn;
    public String path;
 
@@ -51,6 +51,7 @@ public class FolderVIewController implements Initializable {
         });
 
         ArrayList<Node> nodes = new ArrayList<>();
+        mainpath=mainpath.replace("demo-1.0-SNAPSHOT-shaded.jar","");
         path=fn;
         Thread thr = new Thread(new Runnable() {
             @Override
@@ -100,7 +101,7 @@ public class FolderVIewController implements Initializable {
         Insets insets = new Insets(10, 5, 0, 0);
         v.setPadding(insets);
 
-        File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/folder-documents-icon(1).png");
+        File fl = new File(mainpath+"folder-documents-icon(1).png");
         Image img = new Image(fl.toURI().toString());
         v.setPrefHeight(Region.USE_COMPUTED_SIZE);
         v.setPrefWidth(60);
@@ -316,7 +317,7 @@ public class FolderVIewController implements Initializable {
         Insets insets = new Insets(10, 5, 0, 0);
         v.setPadding(insets);
 
-        File fl = new File("/home/me/IdeaProjects/demo/src/main/resources/copy_paste_document_file_1557.png");
+        File fl = new File(mainpath+"copy_paste_document_file_1557.png");
         Image img = new Image(fl.toURI().toString());
         v.setPrefHeight(Region.USE_COMPUTED_SIZE);
         v.setPrefWidth(60);

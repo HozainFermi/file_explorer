@@ -1,5 +1,6 @@
 package com.lab1.demo;
 
+import com.lab1.demo.Controller.ShellExec;
 import com.lab1.demo.Model.SocketClient;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -29,7 +30,7 @@ public class HelloApplication extends Application {
                     @Override
                     public void run() {
                         try {
-                            ArrayList<String> resp = SocketClient.sendCommand("kill -9 $(lsof -t -i:8090)");
+                            ArrayList<String> resp = ShellExec.ExecCommand("kill -9 $(lsof -t -i:8090)");
                            System.out.println(resp.getFirst());
 
                         } catch (IOException e) {

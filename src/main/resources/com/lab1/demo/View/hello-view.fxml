@@ -40,9 +40,9 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFolder" text="Create new folder" />
-                        <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFile" text="Create new file" />
-                        <MenuItem mnemonicParsing="false" onAction="#OnConsoleClicked" text="Console" />
+                    <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFolder" text="Create new folder" fx:id="CreateNewFolderBtn" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFile" text="Create new file" fx:id="CreateNewFileBtn" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnConsoleClicked" text="Console" fx:id="ConsoleBtn" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Information">
@@ -50,7 +50,7 @@
                     <MenuItem mnemonicParsing="false" onAction="#OnProcessPriorClicked" text="Process priority" />
                         <MenuItem mnemonicParsing="false" onAction="#OnUserNameClicked" text="User name" />
                         <MenuItem mnemonicParsing="false" onAction="#OnNumberOfClicked" text="Number of user proceses" />
-                        <MenuItem mnemonicParsing="false" onAction="#OnSaveLogClicked" text="Save log" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnSaveLogClicked" text="Save log" fx:id="SaveLogBtn" />
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="Devises">
@@ -65,7 +65,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Refresh">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#OnReloadClicked" text="Reload" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnReloadClicked" text="Reload" fx:id="ReloadBtn" />
                      </items>
                   </Menu>
               </menus>
