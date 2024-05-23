@@ -1,7 +1,7 @@
 package com.lab1.demo.Controller;
 
 import com.lab1.demo.HelloApplication;
-import com.lab1.demo.Model.SocketClient;
+import com.lab1.demo.Model.SocketClientConsole;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -428,7 +428,7 @@ public class FolderVIewController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            ShellExec.ExecCommand("gedit "+path+"/"+filename.getText());
+                            ShellExec.ExecCommand("xdg-open "+path+"/"+filename.getText());
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

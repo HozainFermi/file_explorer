@@ -3,7 +3,7 @@ package com.lab1.demo.Controller;
 import com.almasb.fxgl.dsl.components.view.ChildViewComponent;
 import com.lab1.demo.HelloApplication;
 import com.lab1.demo.Model.SceneSwitch;
-import com.lab1.demo.Model.SocketClient;
+import com.lab1.demo.Model.SocketClientConsole;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,6 +45,7 @@ public class HelloController implements Initializable {
     public MenuItem CreateNewFileBtn;
     public MenuItem ConsoleBtn;
     public MenuItem SaveLogBtn;
+    public MenuItem ShowInfoBtn;
 
     String mainpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
@@ -85,6 +86,38 @@ public class HelloController implements Initializable {
         stage.setTitle("Number of proceses");
         stage.setScene(new Scene(root1, 200 , 155));
         stage.show();
+    }
+
+    @FXML
+    void OnShowInfoCLicked(ActionEvent event) throws IOException{
+
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/FullInfoTCPserverView.fxml"));
+        Parent root1 = (Parent) fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Info server");
+        stage.setScene(new Scene(root1, 600 , 400));
+        stage.show();
+
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                FXMLLoader fxmlLoader2 = new FXMLLoader(HelloApplication.class.getResource("View/FullInfoTCPclientView.fxml"));
+                Parent root2 = null;
+                try {
+                    root2 = (Parent) fxmlLoader2.load();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                Stage stage2 = new Stage();
+                stage2.setTitle("Info client");
+                stage2.setScene(new Scene(root2, 600, 400));
+                stage2.show();
+
+
+
     }
 
     public void OnSaveLogClicked(ActionEvent event) throws IOException {
@@ -150,7 +183,7 @@ public class HelloController implements Initializable {
                   // /home/me/IdeaProjects/demo/target/demo-1.0-SNAPSHOT-shaded.jar
 
                   String pathtocmd =mainpath.replace("demo-1.0-SNAPSHOT-shaded.jar","CommandLine-1.0-SNAPSHOT-shaded.jar");
-                  System.out.println(mainpath);
+                 // System.out.println(mainpath);
                   mainpath=mainpath.replace("demo-1.0-SNAPSHOT-shaded.jar","");
 
                    // CommandLine-1.0-SNAPSHOT-shaded.jar
@@ -393,15 +426,11 @@ public class HelloController implements Initializable {
 
         try {
            // if (thread.getState()!=Thread.State.TERMINATED) {
-                SocketClient.startConnection("127.0.0.1", 8090);
+                SocketClientConsole.startConnection("127.0.0.1", 8090);
            // }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-       // String fullpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-       // System.out.println(fullpath);
-       // SocketClient.sendCommand(fullpath);
-
     }
 
 
@@ -539,7 +568,7 @@ public class HelloController implements Initializable {
                         @Override
                         public void run() {
                             try {
-                                ShellExec.ExecCommand ("gedit "+filename.getText());
+                                ShellExec.ExecCommand ("xdg-open "+filename.getText());
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }

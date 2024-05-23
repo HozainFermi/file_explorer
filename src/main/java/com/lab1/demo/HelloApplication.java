@@ -1,7 +1,7 @@
 package com.lab1.demo;
 
 import com.lab1.demo.Controller.ShellExec;
-import com.lab1.demo.Model.SocketClient;
+import com.lab1.demo.Model.SocketClientConsole;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;

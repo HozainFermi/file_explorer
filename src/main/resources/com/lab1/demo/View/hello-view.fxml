@@ -34,15 +34,15 @@
             </VBox>
          </children>
       </FlowPane>
-      <HBox prefHeight="27.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox alignment="CENTER" prefHeight="27.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <MenuBar prefHeight="27.0" prefWidth="640.0">
+            <MenuBar prefHeight="27.0" prefWidth="1920.0">
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFolder" text="Create new folder" fx:id="CreateNewFolderBtn" />
-                        <MenuItem mnemonicParsing="false" onAction="#OnCreateNewFile" text="Create new file" fx:id="CreateNewFileBtn" />
-                        <MenuItem mnemonicParsing="false" onAction="#OnConsoleClicked" text="Console" fx:id="ConsoleBtn" />
+                    <MenuItem fx:id="CreateNewFolderBtn" mnemonicParsing="false" onAction="#OnCreateNewFolder" text="Create new folder" />
+                        <MenuItem fx:id="CreateNewFileBtn" mnemonicParsing="false" onAction="#OnCreateNewFile" text="Create new file" />
+                        <MenuItem fx:id="ConsoleBtn" mnemonicParsing="false" onAction="#OnConsoleClicked" text="Console" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Information">
@@ -50,7 +50,8 @@
                     <MenuItem mnemonicParsing="false" onAction="#OnProcessPriorClicked" text="Process priority" />
                         <MenuItem mnemonicParsing="false" onAction="#OnUserNameClicked" text="User name" />
                         <MenuItem mnemonicParsing="false" onAction="#OnNumberOfClicked" text="Number of user proceses" />
-                        <MenuItem mnemonicParsing="false" onAction="#OnSaveLogClicked" text="Save log" fx:id="SaveLogBtn" />
+                      <MenuItem fx:id="ShowInfoBtn" mnemonicParsing="false" onAction="#OnShowInfoCLicked" text="Show info" />
+                        <MenuItem fx:id="SaveLogBtn" mnemonicParsing="false" onAction="#OnSaveLogClicked" text="Save log" />
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="Devises">
@@ -65,7 +66,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Refresh">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#OnReloadClicked" text="Reload" fx:id="ReloadBtn" />
+                        <MenuItem fx:id="ReloadBtn" mnemonicParsing="false" onAction="#OnReloadClicked" text="Reload" />
                      </items>
                   </Menu>
               </menus>

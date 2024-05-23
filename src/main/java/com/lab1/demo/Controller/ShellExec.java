@@ -17,9 +17,9 @@ public class ShellExec {
         //builder.inheritIO();
 
        String fullpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-       System.out.println(fullpath +" --> HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath(); ");
+      // System.out.println(fullpath +" --> HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath(); ");
        fullpath=fullpath.replace("main/demo-1.0-SNAPSHOT-shaded.jar","");
-       System.out.println(fullpath+" ---> after replace ");
+      // System.out.println(fullpath+" ---> after replace ");
 
         builder.command("sh", "-c", command);
         builder.directory(new File(fullpath));

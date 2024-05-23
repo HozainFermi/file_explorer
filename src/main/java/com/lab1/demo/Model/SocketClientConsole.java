@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class SocketClient {
+public class SocketClientConsole {
 
     private static Socket clientSocket;
     private static PrintWriter out;

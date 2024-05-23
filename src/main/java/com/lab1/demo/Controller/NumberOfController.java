@@ -1,7 +1,7 @@
 package com.lab1.demo.Controller;
 
 import com.lab1.demo.Model.SceneSwitch;
-import com.lab1.demo.Model.SocketClient;
+import com.lab1.demo.Model.SocketClientConsole;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
