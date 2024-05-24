@@ -1,9 +1,5 @@
 package com.lab1.demo.Model;
 
-import com.lab1.demo.Controller.FullInfoTCPserverController;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,10 +14,11 @@ public class TCPServer {
     private static PrintWriter out;
     private static BufferedReader in;
 
-    static String str="";
+    public static String str="";
+    public static String mainstr;
     static String buf="";
     static int counter=0;
-    static boolean flag =false;
+    public final static Object flag =false;
 
     public static void startServer(){
         try {
@@ -46,20 +43,21 @@ public class TCPServer {
 
 
                         try {
-                            if ((buf = in.readLine()) != null) {
+                            while ((buf = in.readLine()) != null) {
+                                if(buf.equals("end")){
+
+                                    //flag.wait(200);
+                                    break;
+                                }
                                 str += "\n" + buf;
-                                FullInfoTCPserverController.string=str;
-                               // counter++;
 
-                            } else {
-                               // str = "";
-                               // counter=0;
                             }
-
-
+                            mainstr=str;
+                            str="";
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
+
 
                 }
             }
@@ -67,7 +65,7 @@ public class TCPServer {
         thread.start();
     }
 
-    public void shotdown() throws IOException {
+    public static void shotdown() throws IOException {
 
         clientSocket.close();
         serverSocket.close();

@@ -4,6 +4,8 @@ import com.almasb.fxgl.dsl.components.view.ChildViewComponent;
 import com.lab1.demo.HelloApplication;
 import com.lab1.demo.Model.SceneSwitch;
 import com.lab1.demo.Model.SocketClientConsole;
+import com.lab1.demo.Model.TCPClient;
+import com.lab1.demo.Model.TCPServer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,6 +27,7 @@ import javafx.scene.layout.*;
 import javafx.geometry.Insets;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 import java.awt.*;
@@ -97,6 +100,16 @@ public class HelloController implements Initializable {
         stage.setTitle("Info server");
         stage.setScene(new Scene(root1, 600 , 400));
         stage.show();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                try {
+                    TCPServer.shotdown();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
 
                 try {
@@ -115,14 +128,23 @@ public class HelloController implements Initializable {
                 stage2.setTitle("Info client");
                 stage2.setScene(new Scene(root2, 600, 400));
                 stage2.show();
-
+                stage2.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent windowEvent) {
+                        try {
+                            TCPClient.stopConnection();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
 
 
     }
 
     public void OnSaveLogClicked(ActionEvent event) throws IOException {
         ShellExec.ExecCommand("touch Log-information");
-        String PATH = mainpath+"Log-information";
+        String PATH = mainpath.replace("main/","")+"/Log-information";
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(PATH)));
 
         writer.println("------User name------");

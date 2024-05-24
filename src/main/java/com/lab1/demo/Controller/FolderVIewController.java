@@ -1,7 +1,6 @@
 package com.lab1.demo.Controller;
 
 import com.lab1.demo.HelloApplication;
-import com.lab1.demo.Model.SocketClientConsole;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
