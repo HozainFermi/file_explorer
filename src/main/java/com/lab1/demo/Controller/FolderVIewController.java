@@ -32,6 +32,9 @@ public class FolderVIewController implements Initializable {
 
     @FXML
     public FlowPane FilesPane;
+    public MenuItem NewInnerFile;
+    public MenuItem NewInnerFolder;
+    public Label UIpath;
 
     String mainpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
@@ -56,18 +59,53 @@ public class FolderVIewController implements Initializable {
             @Override
             public void run() {
                 try {
-                    ArrayList<String>  listfiles=  ShellExec.ExecCommand("ls "+fn+" -p | grep -v /");
-                    ArrayList<String>   listfolders =ShellExec.ExecCommand("ls "+"-d"+" "+fn+"/*/");
+                    ArrayList<String>  listfiles=  ShellExec.ExecCommand("ls "+path+" -p | grep -v /");
+                    ArrayList<String>   listfolders =ShellExec.ExecCommand("ls "+"-d"+" "+path+"/*/");
                     if(!listfiles.isEmpty()) {
                         for (String resp : listfiles) {
+
+                            if(resp.contains(" ")) {
+                                String[] response = resp.split(" ");
+                                resp="";
+                                String sub="";
+                                for(int i=0;i<response.length;i++){
+                                    sub=response[i];
+                                    if(i==response.length-1){
+                                        resp+=sub;
+                                    }
+                                    else{
+                                        resp+=sub+"\\ ";
+                                    }
+
+                                }
+                            }
                             nodes.add(CreateNew(resp));
+                            System.out.println(resp);
                         }
                     }
                     if(!listfolders.isEmpty()){
                         for(String st : listfolders){
-                            st = st.replace(fn+"/","");
+                            st = st.replace(path+"/","");
                             st = st.replace("/","");
+
+                            if(st.contains(" ")) {
+                                String[] response = st.split(" ");
+                                st="";
+                                String sub="";
+                                for(int i=0;i<response.length;i++){
+                                    sub=response[i];
+                                    if(i== response.length-1){
+                                        st+=sub;
+                                    }
+                                    else{
+                                        st+=sub+"\\ ";
+                                    }
+
+                                }
+                            }
+
                             nodes.add(CreateNewFolder(st));
+                            System.out.println(st);
                         }
                     }
 
@@ -88,6 +126,7 @@ public class FolderVIewController implements Initializable {
             @Override
             public void run() {
                 FilesPane.getChildren().addAll(nodes);
+                UIpath.setText(path);
             }
         });
 
@@ -238,7 +277,7 @@ public class FolderVIewController implements Initializable {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    FolderVIewController.fn =FolderVIewController.fn+"/"+fn;
+                    FolderVIewController.fn =path+"/"+fn;
                     FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/FolderView.fxml"));
                     Parent roo = (Parent) fxmlLoader.load();
                     Stage stage = new Stage();
@@ -276,6 +315,7 @@ public class FolderVIewController implements Initializable {
                         Thread tr = new Thread(new Runnable() {
                             @Override
                             public void run() {
+
                                 try {
                                     ShellExec.ExecCommand("mv "+path+"/"+filename.getText()+" "+path+"/"+tx.getText());
                                 } catch (IOException e) {
@@ -287,7 +327,6 @@ public class FolderVIewController implements Initializable {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                //FilesPane.getScene().getWindow().setWidth(FilesPane.getScene().getWidth()+0.001);
                                 filename.setText(tx.getText());
                             }
                         });
@@ -499,4 +538,24 @@ public class FolderVIewController implements Initializable {
     }
 
 
+    public void OnCreateNewInnerFile(ActionEvent event) throws IOException {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                FilesPane.getChildren().add(CreateNew("NewCreatedFile"));
+            }
+        });
+        ShellExec.ExecCommand("touch "+path+"/"+"NewCreatedFile");
+
+    }
+
+    public void OnCreateNewInnerFolder(ActionEvent event) throws IOException {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                FilesPane.getChildren().add(CreateNewFolder("NewCreatedFolder"));
+            }
+        });
+        ShellExec.ExecCommand("mkdir "+path+"/"+"NewCreatedFolder");
+    }
 }

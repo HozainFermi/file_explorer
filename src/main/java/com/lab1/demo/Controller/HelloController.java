@@ -433,7 +433,7 @@ public class HelloController implements Initializable {
         ArrayList<String> username = ShellExec.ExecCommand("whoami");
         ArrayList<String> list = ShellExec.ExecCommand("ls /media/"+username.getFirst()+"/");  // !!!!!!
         for(String resp : list){
-            FolderVIewController.Getfn("/media/"+username.getFirst()+"/"+resp+"/");
+            FolderVIewController.Getfn("/media/"+username.getFirst()+"/"+resp);
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/FolderView.fxml"));
             Parent root1 = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
