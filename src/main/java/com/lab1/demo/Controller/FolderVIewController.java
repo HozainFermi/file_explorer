@@ -80,7 +80,6 @@ public class FolderVIewController implements Initializable {
                                 }
                             }
                             nodes.add(CreateNew(resp));
-                            System.out.println(resp);
                         }
                     }
                     if(!listfolders.isEmpty()){
@@ -100,12 +99,9 @@ public class FolderVIewController implements Initializable {
                                     else{
                                         st+=sub+"\\ ";
                                     }
-
                                 }
                             }
-
                             nodes.add(CreateNewFolder(st));
-                            System.out.println(st);
                         }
                     }
 
