@@ -7,6 +7,8 @@ import com.lab1.demo.Model.SocketClientConsole;
 import com.lab1.demo.Model.TCPClient;
 import com.lab1.demo.Model.TCPServer;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -32,10 +34,15 @@ import javafx.stage.WindowEvent;
 
 import java.awt.*;
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HelloController implements Initializable {
     @FXML
@@ -47,17 +54,62 @@ public class HelloController implements Initializable {
     public MenuItem CreateNewFolderBtn;
     public MenuItem CreateNewFileBtn;
     public MenuItem ConsoleBtn;
-    public MenuItem SaveLogBtn;
+    public MenuItem SaveReportBtn;
     public MenuItem ShowInfoBtn;
+    public TextField FindTextField;
 
     String mainpath = HelloController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
     ArrayList<Node> fil = new ArrayList<Node>();
 
+    private static ServerSocket serverSocket;
+    private static Socket clientSocket;
+    private static PrintWriter out;
+    private static BufferedReader in;
+    final static AtomicBoolean key = new AtomicBoolean();
+
+
+    public static void startServer() {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    //serverSocket = new ServerSocket(8092);
+                    System.out.println("Server is ready, waiting for connections");
+                    clientSocket = serverSocket.accept();
+                    System.out.println("Connection accepted");
+                    out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
+        thread.start();
+    }
+
+    public static void shutdown() throws IOException {
+
+        //clientSocket.close();
+        serverSocket.close();
+        in.close();
+        out.close();
+    }
 
 
     @FXML
      void OnUserNameClicked(ActionEvent event) throws IOException {
+        Thread serverthread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startServer();
+            }
+        });
+        serverthread.start();
+
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/UserNameScene.fxml"));
         Parent root1 = (Parent) fxmlLoader.load();
         Stage stage = new Stage();
@@ -65,6 +117,30 @@ public class HelloController implements Initializable {
         stage.setScene(new Scene(root1, 200, 155));
         stage.show();
 
+
+      stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+          @Override
+          public void handle(WindowEvent windowEvent) {
+            //  try {
+            //      UserNameController.stopConnection();
+            //  } catch (IOException e) {
+            //      throw new RuntimeException(e);
+            //  }
+          }
+      });
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<String> list = ShellExec.ExecCommand("whoami");
+                    out.println(list.getFirst());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        thread.start();
     }
 
     @FXML
@@ -77,11 +153,17 @@ public class HelloController implements Initializable {
        stage.setScene(new Scene(root1, 200, 155));
        stage.show();
 
-
     }
 
     @FXML
      void OnNumberOfClicked(ActionEvent event) throws IOException {
+        Thread serverthread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startServer();
+            }
+        });
+        serverthread.start();
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/NumberOfScene.fxml"));
         Parent root1 = (Parent) fxmlLoader.load();
@@ -89,6 +171,33 @@ public class HelloController implements Initializable {
         stage.setTitle("Number of proceses");
         stage.setScene(new Scene(root1, 200 , 155));
         stage.show();
+
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+              //  try {
+              //      NumberOfController.stopConnection();
+              //  } catch (IOException e) {
+              //      throw new RuntimeException(e);
+              //  }
+            }
+        });
+
+        Thread numberofthread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<String> list = null;
+                try {
+                    list = ShellExec.ExecCommand("ps -aux --no-headers | grep -v java | wc -l"); // vse proc krome programmi
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String buf="";
+                buf+="--"+list.getFirst();
+                out.println(buf);
+            }
+        });
+        numberofthread.start();
     }
 
     @FXML
@@ -110,7 +219,6 @@ public class HelloController implements Initializable {
                 }
             }
         });
-
 
                 try {
                     Thread.sleep(200);
@@ -142,9 +250,10 @@ public class HelloController implements Initializable {
 
     }
 
-    public void OnSaveLogClicked(ActionEvent event) throws IOException {
-        ShellExec.ExecCommand("touch Log-information");
-        String PATH = mainpath.replace("main/","")+"/Log-information";
+    public void OnSaveReportClicked(ActionEvent event) throws IOException {
+
+        ShellExec.ExecCommand("touch Report-information");
+        String PATH = mainpath.replace("main/","")+"Report-information"; //!!!
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(PATH)));
 
         writer.println("------User name------");
@@ -158,13 +267,44 @@ public class HelloController implements Initializable {
         }
 
         writer.println("------Number of processes------");
-        ArrayList<String> list = ShellExec.ExecCommand("ps -eo user,pid,pcpu,nice,comm | grep -v java");
-        writer.println(list.size());
-        for(int i=0;i<list.size();i++){
+        ArrayList<String> list = ShellExec.ExecCommand("ps -eo command,lstart | grep -v java");
+        writer.println(list.size()-5);
+        for(int i=0;i<list.size()-5;i++){
+            if(list.get(i).contains("SuperApp")){continue;}
             writer.println(list.get(i));
         }
+
         writer.close();
     }
+    public void OnSaveLogClicked(ActionEvent event) throws IOException {
+        ObservableList<Node> children = FilesPane.getChildren();
+        Boolean noLogFile=true;
+        String PATH = mainpath.replace("main/","")+"Log";
+        ArrayList<String> username = ShellExec.ExecCommand("whoami");
+        Calendar now = Calendar.getInstance();
+
+        for(Node chield : children){
+            VBox ch = (VBox)chield;
+            Label name = (Label) ch.getChildren();
+            if(name.getText()=="Log"){
+                noLogFile=false;
+                FileWriter writer = new FileWriter(PATH, true);
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+                bufferedWriter.write(now.get(Calendar.DAY_OF_MONTH)+"-"+now.get(Calendar.MONTH)+"-"+now.get(Calendar.YEAR)+" "+ now.get(Calendar.HOUR_OF_DAY)+":"+now.get(Calendar.MINUTE)+
+                        " "+username.getFirst()+"\n");
+                bufferedWriter.close();
+            }
+        }
+        if(noLogFile){
+            ShellExec.ExecCommand("touch Log");
+            FileWriter writer = new FileWriter(PATH, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+            bufferedWriter.write(now.get(Calendar.DAY_OF_MONTH)+"-"+now.get(Calendar.MONTH)+"-"+now.get(Calendar.YEAR)+" "+ now.get(Calendar.HOUR_OF_DAY)+":"+now.get(Calendar.MINUTE)+
+                    " "+username.getFirst()+"\n");
+            bufferedWriter.close();
+        }
+    }
+
 
     @FXML
     void OnReloadClicked(ActionEvent event){
@@ -172,6 +312,20 @@ public class HelloController implements Initializable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                try {
+                    serverSocket.close();
+                    if(clientSocket!=null){
+                        clientSocket.close();
+                    }
+                    if(in!=null){
+                        in.close();
+                    }
+                    if(out!=null){
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/hello-view.fxml"));
                 Parent root1 = null;
                 try {
@@ -185,7 +339,66 @@ public class HelloController implements Initializable {
         });
     }
 
+    public void OnDisksClicked(ActionEvent event) {
+        Thread diskthread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ShellExec.ExecCommand("gnome-disks");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        diskthread.start();
+    }
 
+    public void OnDiskAnalyzer(ActionEvent event) {
+        Thread diskanalyzerthread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ShellExec.ExecCommand("baobab");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        diskanalyzerthread.start();
+    }
+    public void OnTerminalClicked(ActionEvent event) {
+        Thread terminalthread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ShellExec.ExecCommand("gnome-terminal");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        terminalthread.start();
+    }
+
+    public void OnFindBtnClicked(ActionEvent event) throws IOException {
+        String needfind=FindTextField.getText();
+        ArrayList<String> list = ShellExec.ExecCommand("find . -name "+needfind);
+        for(String pathtoneed : list ){
+            pathtoneed=pathtoneed.replace("./","");
+            pathtoneed=pathtoneed.replace("/"+needfind,"");
+            try {
+                FolderVIewController.Getfn(pathtoneed);
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/FolderView.fxml"));
+                Parent root1 = (Parent) fxmlLoader.load();
+                Stage stage = new Stage();
+                stage.setTitle(pathtoneed);
+                stage.setScene(new Scene(root1));
+                stage.show();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
 
     @Override
@@ -195,7 +408,44 @@ public class HelloController implements Initializable {
         CreateNewFolderBtn.setAccelerator(new KeyCodeCombination(KeyCode.E,KeyCombination.CONTROL_DOWN));
         CreateNewFileBtn.setAccelerator(new KeyCodeCombination(KeyCode.X,KeyCombination.CONTROL_DOWN));
         ConsoleBtn.setAccelerator(new KeyCodeCombination(KeyCode.T,KeyCombination.CONTROL_DOWN));
-        SaveLogBtn.setAccelerator(new KeyCodeCombination(KeyCode.L,KeyCombination.CONTROL_DOWN));
+        SaveReportBtn.setAccelerator(new KeyCodeCombination(KeyCode.L,KeyCombination.CONTROL_DOWN));
+
+        Thread savelog = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String PATH = mainpath.replace("main/demo-1.0-SNAPSHOT-shaded.jar","")+"Log";
+                    ArrayList<String> username = ShellExec.ExecCommand("whoami");
+                    Calendar now = Calendar.getInstance();
+
+                    FileWriter writer = new FileWriter(PATH, true);
+                    BufferedWriter bufferedWriter = new BufferedWriter(writer);
+                    bufferedWriter.write(now.get(Calendar.DAY_OF_MONTH)+"-"+now.get(Calendar.MONTH)+"-"+now.get(Calendar.YEAR)+" "+ now.get(Calendar.HOUR_OF_DAY)+":"+now.get(Calendar.MINUTE)+
+                            " "+username.getFirst()+"\n");
+                    bufferedWriter.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                Calendar now = Calendar.getInstance();
+            }
+        });
+        savelog.start();
+
+
+        try {
+
+            serverSocket = new ServerSocket(8092);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Thread serverthread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startServer();
+            }
+        });
+        serverthread.start();
+
 
         Thread thread = new Thread(new Runnable() {
             @Override

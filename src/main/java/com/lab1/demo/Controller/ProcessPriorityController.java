@@ -9,12 +9,21 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ProcessPriorityController implements Initializable {
+
+    private static ServerSocket serverSocket;
+    private static Socket clientSocket;
+    private static PrintWriter out;
+    private static BufferedReader in;
 
     @FXML
     public Label ProcessPriorityLabel;
@@ -23,15 +32,12 @@ public class ProcessPriorityController implements Initializable {
     public AnchorPane ProcessPriorityAnchorPane;
     String fullstr="";
 
-    @FXML
-    void BackBtnClicked(ActionEvent event) throws IOException {
-        new SceneSwitch(ProcessPriorityAnchorPane,"View/hello-view.fxml");
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         try {
-            ArrayList<String> list = ShellExec.ExecCommand("ps -eo user,nice,comm | grep java");
+            ArrayList<String> list = ShellExec.ExecCommand("ps -eo user,nice,command | grep java");
             for(int i=0;i<list.size();i++){
                 fullstr+="\n";
                 fullstr+=list.get(i);

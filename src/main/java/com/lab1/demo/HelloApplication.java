@@ -1,5 +1,6 @@
 package com.lab1.demo;
 
+import com.lab1.demo.Controller.HelloController;
 import com.lab1.demo.Controller.ShellExec;
 import com.lab1.demo.Model.SocketClientConsole;
 import javafx.application.Application;
@@ -19,7 +20,7 @@ public class HelloApplication extends Application {
        // new LoadFiles().run();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("View/hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 640, 316);
-        stage.setTitle("Hello!");
+        stage.setTitle("SuperApp");
         stage.setScene(scene);
         stage.show();
 
@@ -30,7 +31,10 @@ public class HelloApplication extends Application {
                     @Override
                     public void run() {
                         try {
+                            HelloController.shutdown();
+                            SocketClientConsole.stopConnection();
                             ArrayList<String> resp = ShellExec.ExecCommand("kill -9 $(lsof -t -i:8090)");
+
                            System.out.println(resp.getFirst());
 
                         } catch (IOException e) {

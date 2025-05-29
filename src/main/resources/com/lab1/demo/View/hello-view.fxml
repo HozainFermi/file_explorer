@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="scene1AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="316.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab1.demo.Controller.HelloController">
    <children>
@@ -34,9 +37,9 @@
             </VBox>
          </children>
       </FlowPane>
-      <HBox alignment="CENTER" prefHeight="27.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox prefHeight="27.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <MenuBar prefHeight="27.0" prefWidth="1920.0">
+            <MenuBar prefHeight="27.0">
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
@@ -51,9 +54,17 @@
                         <MenuItem mnemonicParsing="false" onAction="#OnUserNameClicked" text="User name" />
                         <MenuItem mnemonicParsing="false" onAction="#OnNumberOfClicked" text="Number of user proceses" />
                       <MenuItem fx:id="ShowInfoBtn" mnemonicParsing="false" onAction="#OnShowInfoCLicked" text="Show info" />
-                        <MenuItem fx:id="SaveLogBtn" mnemonicParsing="false" onAction="#OnSaveLogClicked" text="Save log" />
+                        <MenuItem fx:id="SaveReportBtn" mnemonicParsing="false" onAction="#OnSaveReportClicked" text="Save report" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnSaveLogClicked" text="Save Log" />
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="Sys. utilities">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#OnDisksClicked" text="Disks" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnDiskAnalyzer" text="Disk analyzer" />
+                        <MenuItem mnemonicParsing="false" onAction="#OnTerminalClicked" text="Terminal" />
+                    </items>
+                  </Menu>
                   <Menu mnemonicParsing="false" text="Devises">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#OnShowDevises" text="Show devises" />
@@ -71,6 +82,19 @@
                   </Menu>
               </menus>
             </MenuBar>
+            <TextField fx:id="FindTextField" prefHeight="24.0" prefWidth="126.0">
+               <HBox.margin>
+                  <Insets left="5.0" top="3.0" />
+               </HBox.margin>
+            </TextField>
+            <Button fx:id="FindBtn" mnemonicParsing="false" onAction="#OnFindBtnClicked" prefHeight="24.0" prefWidth="43.0" text="Find">
+               <HBox.margin>
+                  <Insets top="3.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
          </children>
       </HBox>
    </children>
